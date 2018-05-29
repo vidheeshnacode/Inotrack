@@ -1,5 +1,6 @@
 package com.example.vid.inotrack;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
                                     .setProviders(providers)//Providers(providers)
                                     .build(),
                             RC_SIGN_IN);
+                    finish();
 
                 } else {
                     // user is already signed in. // stay on main activity only.
@@ -57,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         logOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAuth.signOut();
+               AuthUI.getInstance().signOut(MainActivity.this);
             }
         });
     }
@@ -72,5 +74,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+         if(requestCode==RC_SIGN_IN)
+         {
+             if(resultCode==RESULT_OK)
+             {
+                 Intent mainIntent=new Intent(MainActivity.this,MainActivity.class);
+                 startActivity(mainIntent);
+             }
+             else if(resultCode==RESULT_CANCELED)
+             {
+                 finish();
+             }
+         }
     }
 }
